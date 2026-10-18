@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -9,7 +10,14 @@ import (
 )
 
 func main() {
-	port := os.Getenv("PORT")
+	var portFlag string
+	flag.StringVar(&portFlag, "port", "", "Port to listen on")
+	flag.Parse()
+
+	port := portFlag
+	if port == "" {
+		port = os.Getenv("PORT")
+	}
 	if port == "" {
 		port = "8080"
 	}

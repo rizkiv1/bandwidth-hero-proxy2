@@ -34,8 +34,10 @@ You must install `libvips` on your system before compiling or running the proxy.
    ```bash
    make build
    ```
-3. Run the binary. By default, it listens on port `8080`, but you can configure this using the `PORT` environment variable:
+3. Run the binary. By default, it listens on port `8080`, but you can configure this using the `--port` flag or `PORT` environment variable:
    ```bash
+   ./bandwidth-hero-proxy --port 8080
+   # or
    PORT=8080 ./bandwidth-hero-proxy
    ```
 
