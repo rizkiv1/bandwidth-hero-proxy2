@@ -1,3 +1,0 @@
-name = "bandwidth-proxy"
-main = "functions/index.js"
-compatibility_date = "2023-10-18"
