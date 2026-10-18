@@ -1,0 +1,9 @@
+{
+  "name": "bandwidth-hero-proxy",
+  "version": "1.0.0",
+  "description": "Dummy package to satisfy legacy Cloudflare Workers CI",
+  "main": "functions/index.js",
+  "scripts": {
+    "build": "echo 'No build needed for dummy worker'"
+  }
+}
