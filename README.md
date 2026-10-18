@@ -1,16 +1,15 @@
-# Bandwidth Hero Data Compression Service
+# Bandwidth Hero Data Compression Service (Go Edition)
 
-Welcome to the **Serverless** port of Bandwidth Hero Data Compression Service 🚀. This service is designed to compress images on the fly, saving you bandwidth and improving your browsing experience.
+Welcome to the **Standalone Go** port of the Bandwidth Hero Data Compression Service 🚀. This service is designed to compress images on the fly, saving you bandwidth and improving your browsing experience.
 
-To get started with deploying your own instance of this service, please follow the detailed instructions in the #Deployment section below.
+Originally a Serverless Node.js application, this service has been fully rewritten in Go to be deployed as a highly efficient, single standalone binary. It compresses (optionally grayscale) given images to low-res [WebP](https://developers.google.com/speed/webp/) or JPEG format.
 
-Forked from [adi-g15/bandwidth-hero-proxy](https://github.com/adi-g15/bandwidth-hero-proxy) just trying to make the code up-to-date and error less upto my limited (equal to nothing) coding knowledge.
+It downloads the original image and transforms it with `libvips` (via the `bimg` library) on the fly without saving images on disk.
 
-The original and this fork, both are, data compression service used by [Bandwidth Hero](https://github.com/ayastreb/bandwidth-hero) browser extension. It compresses (optionally grayscale) given image to low-res [WebP](https://developers.google.com/speed/webp/) or JPEG image.
-
-It downloads original image and transforms it with [Sharp](https://github.com/lovell/sharp) on the fly without saving images on disk.
-
-**Benefits** - It's faster for initial requests, as it doesn't require restarting a sleeping heroku server deployment, also, you may benefit from a better ping (in my case it is such)
+**Benefits:**
+- **Single Binary**: Easy to deploy without managing complex Node.js dependencies in production.
+- **High Performance**: Leverages Go's concurrency and `libvips`'s blazing-fast C-based image processing.
+- **Lower Resource Usage**: Optimized CPU and memory footprint compared to the previous Node.js serverless functions.
 
 > Note: It downloads images on user's behalf (By passing in same headers to the domain with required image), passing cookies and user's IP address through to the origin host.
 
@@ -20,16 +19,26 @@ This proxy forwards browser headers (User-Agent, Accept, Accept-Language, Accept
 
 ## Deployment
 
-You need to deploy the functions to Netlify:
+Since this is a standalone Go web server, you will need a server (like a VPS) to run it.
 
-[![Deploy](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/ukind/bandwidth-hero-proxy2)
+### Prerequisites
 
-Then, in the **Data Compression Service** in Bandwidth Hero extension, add `https://your-netlify-domain.netlify.app/api/index`, and you are good to go.
+You must install `libvips` on your system before compiling or running the proxy.
+- **Ubuntu/Debian**: `sudo apt-get install libvips-dev pkg-config`
+- **Alpine**: `apk add vips-dev pkgconfig`
 
-<!-- READ THIS ARTICLE LATER AdityaG
-Check out [this guide](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04)
-on how to setup Node.js on Ubuntu. 
-DigitalOcean also provides an
-[easy way](https://www.digitalocean.com/products/one-click-apps/node-js/) to setup a server ready to
-host Node.js apps.
--->
+### Building and Running
+
+1. Clone the repository.
+2. Build the binary using the provided Makefile:
+   ```bash
+   make build
+   ```
+3. Run the binary. By default, it listens on port `8080`, but you can configure this using the `PORT` environment variable:
+   ```bash
+   PORT=8080 ./bandwidth-hero-proxy
+   ```
+
+It is highly recommended to run this service behind a reverse proxy like Nginx, Caddy, or Cloudflare Tunnels.
+
+Once deployed and running, open the **Data Compression Service** in your Bandwidth Hero extension, add your server URL (e.g., `http://your-server-ip:8080/api/index`), and you are good to go!
